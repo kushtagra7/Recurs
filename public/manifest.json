@@ -3,6 +3,12 @@
     "name": "Recurs",
     "version": "0.1.0",
     "description": "Your DSA revision assistant.",
+
+    "permissions":[
+        "activeTab",
+        "tabs"
+    ],
+
     "action": {
         "default_popup": "index.html"
     }
