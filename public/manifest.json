@@ -5,8 +5,7 @@
     "description": "Your DSA revision assistant.",
 
     "permissions":[
-        "activeTab",
-        "tabs"
+        "activeTab"
     ],
 
     "action": {
