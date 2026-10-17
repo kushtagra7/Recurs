@@ -1,25 +1,36 @@
 import { useEffect, useState } from "react";
-import { getActiveTab } from "./browser";
+import { getActiveTab, getPageInfo } from "./browser";
 
 function ExtensionHome() {
+
   const [currentUrl, setCurrentUrl] = useState("");
   const [isLeetCode, setIsLeetCode] = useState(false);
+  const [pageTitle, setPageTitle] = useState("");
 
   useEffect(() => {
     async function checkCurrentTab() {
-      const tab = await getActiveTab();
+    const tab = await getActiveTab();
 
-      if (!tab) {
+    if (!tab) {
         return;
-      }
+    }
 
-      const url = tab.url || "";
+    const url = tab.url || "";
+    setCurrentUrl(url);
 
-      setCurrentUrl(url);
+    const leetCodePage =
+        url.includes("leetcode.com/problems/");
 
-      setIsLeetCode(
-        url.includes("leetcode.com/problems/")
-      );
+    setIsLeetCode(leetCodePage);
+
+    if (!leetCodePage || !tab.id) {
+        return;
+    }
+
+    const pageInfo = await getPageInfo(tab.id);
+    if (pageInfo?.title) {
+        setPageTitle(pageInfo.title);
+    }
     }
 
     checkCurrentTab();
@@ -32,7 +43,7 @@ function ExtensionHome() {
       {isLeetCode ? (
         <>
           <p>LeetCode problem detected</p>
-          <p>{currentUrl}</p>
+          <p>{pageTitle}</p>
         </>
       ) : (
         <p>Open a LeetCode problem to get started.</p>
