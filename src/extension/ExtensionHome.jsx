@@ -6,6 +6,7 @@ function ExtensionHome() {
   const [currentUrl, setCurrentUrl] = useState("");
   const [isLeetCode, setIsLeetCode] = useState(false);
   const [pageTitle, setPageTitle] = useState("");
+  const [difficulty, setDifficulty] = useState("");
 
   useEffect(() => {
     async function checkCurrentTab() {
@@ -28,8 +29,9 @@ function ExtensionHome() {
     }
 
     const pageInfo = await getPageInfo(tab.id);
-    if (pageInfo?.title) {
-        setPageTitle(pageInfo.title);
+    if (pageInfo) {
+        setPageTitle(pageInfo.title || "");
+        setDifficulty(pageInfo.difficulty || "");
     }
     }
 
@@ -44,6 +46,7 @@ function ExtensionHome() {
         <>
           <p>LeetCode problem detected</p>
           <p>{pageTitle}</p>
+          <p>{difficulty}</p>
         </>
       ) : (
         <p>Open a LeetCode problem to get started.</p>
