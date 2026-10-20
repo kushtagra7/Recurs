@@ -44,6 +44,6 @@ function getProblemDifficulty(){
         if(difficultyLevels.includes(text)){
             return text;
         }
-        return null;
     }
+    return null;
 }
