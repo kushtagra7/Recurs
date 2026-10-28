@@ -1,3 +1,4 @@
+const browserAPI = globalThis.browser ?? globalThis.HTMLAnchorElement;
 //get all saved problems
 export async function getSavedProblems() {
     const data = await browserAPI.storage.local.get("problems");
@@ -12,6 +13,13 @@ export async function saveProblem(problem) {
     problems.push(problem);
 
     await browserAPI.storage.local.set({
-        problems: problem,
+        problems: problems,
     })
 }
+
+//Current Flow
+/*
+    getSavedProblems() reads the existing saved array.
+    problems.push(problem) adds the new problem to that array.
+    storage.local.set(...) writes the updated array back to browser storage.
+*/

@@ -38,6 +38,14 @@ function ExtensionHome() {
         setPageTitle(pageInfo.title || "");
         setDifficulty(pageInfo.difficulty || "");
     }
+
+    const problems = await getSavedProblems();
+
+    const alreadyExists = problems.some(
+      (problem) => problem.url == url
+    );
+
+    setIsSaved(alreadyExists);
     }
 
     checkCurrentTab();
@@ -58,12 +66,16 @@ function ExtensionHome() {
       const alreadyExists = problems.some(
         (problem) => problem.url === currentUrl
       );
+      //.some() checks whether at least one array element satisfies a condition.
+      //we use url as 2 problems can have same name but not the same url
 
       if (alreadyExists) {
+        //we mark the problem as already saved and exit without inserting another copy
         setIsSaved(true);
         return;
       }
 
+      //we create a js object that represents one saved problem
       const problem = {
         title: pageTitle,
         difficulty: difficulty,
@@ -73,6 +85,9 @@ function ExtensionHome() {
 
       await saveProblem(problem);
       setIsSaved(true);
+      //first line waits till the problem is saved 
+      //second line marks the problem as saved only after the operation above which is run in the storage locally is completed
+
     } catch (error) {
       console.error("Failed to save problems:", error);
       setSaveError("Couldn't save this problem. Try Again");
@@ -90,6 +105,19 @@ function ExtensionHome() {
           <p>LeetCode problem detected</p>
           <p>{pageTitle}</p>
           <p>{difficulty}</p>
+
+          <button
+            onClick={handleSave}
+            disabled={isSaving || isSaved}
+          >
+            {isSaving
+              ? "Saving..."
+              : isSaved
+                ? "Added to Recurs!!"
+                : "Add to Recurs"}
+          </button>
+
+          {saveError && <p>{saveError}</p>}
         </>
       ) : (
         <p>Open a LeetCode problem to get started.</p>
