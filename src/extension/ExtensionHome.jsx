@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getActiveTab, getPageInfo } from "./browser";
+import { getSavedProblems, saveProblem } from "./storage";
 
 function ExtensionHome() {
 
@@ -7,6 +8,10 @@ function ExtensionHome() {
   const [isLeetCode, setIsLeetCode] = useState(false);
   const [pageTitle, setPageTitle] = useState("");
   const [difficulty, setDifficulty] = useState("");
+
+  const [isSaved, setIsSaved] = useState(false);  // tracks whether a problem is already saved 
+  const [isSaving, setIsSaving] = useState(false);// tracks whether an operation is under working
+  const [saveError, setSaveError] = useState(""); // stores an error msg if the saving fails
 
   useEffect(() => {
     async function checkCurrentTab() {
@@ -37,6 +42,44 @@ function ExtensionHome() {
 
     checkCurrentTab();
   }, []);
+
+  //this function takes care of the saving mechanism
+  async function handleSave(){
+    if(isSaving || isSaved){
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveError("");
+
+    try {
+      const problems = await getSavedProblems();
+
+      const alreadyExists = problems.some(
+        (problem) => problem.url === currentUrl
+      );
+
+      if (alreadyExists) {
+        setIsSaved(true);
+        return;
+      }
+
+      const problem = {
+        title: pageTitle,
+        difficulty: difficulty,
+        url: currentUrl,
+        savedAt: new Date().toISOString(),
+      };
+
+      await saveProblem(problem);
+      setIsSaved(true);
+    } catch (error) {
+      console.error("Failed to save problems:", error);
+      setSaveError("Couldn't save this problem. Try Again");
+    } finally{
+      setIsSaving(false);
+    }
+  }
 
   return (
     <div>
