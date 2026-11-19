@@ -77,6 +77,7 @@ function ExtensionHome() {
 
       //we create a js object that represents one saved problem
       const problem = {
+        id: crypto.randomUUID(), //build in js api that generates a random uuid(universally unique identifier)
         title: pageTitle,
         difficulty: difficulty,
         url: currentUrl,
